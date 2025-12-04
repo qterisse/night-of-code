@@ -1,19 +1,26 @@
-function App() {
+import { LoaderCircle } from "lucide-react"
+import { useState } from "react"
+
+function LandingPage() {
+  const [loading, setLoading] = useState(false);
 
   const handleOnClick = (evt: any) => {
     
   }
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-center bg-light-cream text-cobalt-blue font-montserrat">
+    <div className="relative w-screen h-screen flex flex-col items-center justify-center font-montserrat">
       <div className="mb-15 z-10">
         <h1 className="font-black font-gasoek-one text-[80px]">Faites la <mark className="bg-cobalt-blue text-light-cream px-6">connexion</mark></h1>
         <p className="text-lg text-right mr-5">Apprendre la sobriété numérique en quelques clics</p>
       </div>
 
-      <button onClick={handleOnClick} className="uppercase text-xl bg-cobalt-blue text-light-cream font-bold px-6 py-3 cursor-pointer rounded duration-100 hover:shadow-xl">
-        Play
-      </button>
+      <div className="flex items-stretch">
+        <input maxLength={25} placeholder="Comment tu t'appelles ?" className="border rounded-l-xl focus:outline-none px-4" />
+        <button onClick={handleOnClick} className={`w-30 text-center font-black uppercase text-xl bg-cobalt-blue text-light-cream px-6 py-3 cursor-pointer rounded-r-xl duration-200 hover:shadow-xl`}>
+          {loading ? (<LoaderCircle className={loading ? "animate-spin mx-auto" : ""}/>) : (<span>Jouer</span>)}
+        </button>
+      </div>
 
       <div className="max-w-250 mt-15 text-center w-9/10 space-y-4 z-20">
         <p>Chaque foyer français dispose en 2023 d'environ 10 équipements numériques dotés d'un écran, qu'ils soient utilisés ou non, 
@@ -31,4 +38,4 @@ function App() {
   )
 }
 
-export default App
+export default LandingPage;
