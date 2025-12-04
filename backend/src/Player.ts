@@ -11,6 +11,11 @@ export class Player {
         this._socket = socket;
     }
 
+    // SETTERS
+    public setUsername(username: string): void {
+        this._username = username;
+    }
+
     // GETTERS
     public getID(): number {
         return this._id;
