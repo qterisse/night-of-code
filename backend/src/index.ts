@@ -76,7 +76,9 @@ function joinRoom(): { playerId: number; room: Room } {
 io.on('connection', (socket) => {
   console.log('Nouveau client connecté :', socket.id);
 
-  socket.on('join-room', () => {
+  socket.on('join-room', (username) => {
+
+	console.log("username: ", username);
     const { playerId, room } = joinRoom();
 
     const roomName = `room-${room.id}`;
