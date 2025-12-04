@@ -1,11 +1,16 @@
 import { LoaderCircle } from "lucide-react"
 import { useState } from "react"
+import { socket } from "../services/socket";
 
 function LandingPage() {
   const [loading, setLoading] = useState(false);
 
-  const handleOnClick = (evt: any) => {
-    
+  const handleOnSubmit = (evt: any) => {
+    evt.preventDefault();
+    const formData = new FormData(evt.target);
+    socket.emit('join-room', {
+        username: formData.get('username')
+    })
   }
 
   return (
@@ -15,12 +20,12 @@ function LandingPage() {
         <p className="text-lg text-right mr-5">Apprendre la sobriété numérique en quelques clics</p>
       </div>
 
-      <div className="flex items-stretch">
-        <input maxLength={25} placeholder="Comment tu t'appelles ?" className="border rounded-l-xl focus:outline-none px-4" />
-        <button onClick={handleOnClick} className={`w-30 text-center font-black uppercase text-xl bg-cobalt-blue text-light-cream px-6 py-3 cursor-pointer rounded-r-xl duration-200 hover:shadow-xl`}>
+      <form onSubmit={handleOnSubmit} className="flex items-stretch">
+        <input name="username" maxLength={25} placeholder="Comment tu t'appelles ?" className="border rounded-l-xl focus:outline-none px-4" />
+        <button type="submit" className={`w-30 text-center font-black uppercase text-xl bg-cobalt-blue text-light-cream px-6 py-3 cursor-pointer rounded-r-xl duration-200 hover:shadow-xl`}>
           {loading ? (<LoaderCircle className={loading ? "animate-spin mx-auto" : ""}/>) : (<span>Jouer</span>)}
         </button>
-      </div>
+      </form>
 
       <div className="max-w-250 mt-15 text-center w-9/10 space-y-4 z-20">
         <p>Chaque foyer français dispose en 2023 d'environ 10 équipements numériques dotés d'un écran, qu'ils soient utilisés ou non, 

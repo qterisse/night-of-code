@@ -2,10 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import { Socket, Server } from 'socket.io';
 import { createServer } from 'http';
-import { join } from 'path';
 import { Player } from './Player';
 import { Rooms } from './Rooms';
-import { Room } from './Room';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -83,7 +81,7 @@ io.on('connection', (socket: Socket) => {
   players.set(socket.id, new Player(playerIDs, '', socket));
   playerIDs++;
 
-  socket.on('join-room', (username) => {
+  socket.on('join-room', (username: string) => {
 
 	console.log("username: ", username);
     const player = players.get(socket.id);

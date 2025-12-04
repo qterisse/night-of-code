@@ -20,7 +20,7 @@ export class Rooms extends Map<number, Room> {
             if (room.addPlayer(player))
                 return room;
         }
-        this.createRoom(player);
+        return this.createRoom(player);
     }
 
     public leaveRoom(player: Player, roomID?: number): boolean {

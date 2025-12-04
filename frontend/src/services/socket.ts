@@ -6,10 +6,16 @@ socket.on("connect", () => {
   console.log("Connecté au serveur socket, id:", socket.id);
 });
 
-socket.on("joined-room", (data) => {
+type room = {
+  id: number;
+  players: number[];
+  isOpen: boolean;
+};
+
+socket.on("joined-room", (data: room) => {
   console.log("Joined room:", data);
 });
 
-socket.on("room-update", (data) => {
+socket.on("room-update", (data: room) => {
   console.log("Room update:", data);
 });
