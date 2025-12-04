@@ -8,26 +8,36 @@ export class Rooms extends Map<number, Room> {
         super();
     }
 
-    public createRoom(creator: Player): void {
+    public createRoom(creator: Player): Room {
         this._ids++;
         const room: Room = new Room(this._ids, creator);
         this.set(this.size + 1, room);
+        return room;
     }
     
-    public joinRoom(player: Player): void /* boolean */ {
+    public joinRoom(player: Player): Room {
         for (const [, room] of this.entries()) {
             if (room.addPlayer(player))
-                return /* true */;
+                return room;
         }
         this.createRoom(player);
     }
 
-    public leaveRoom(player: Player, roomID: number): boolean {
-        const room = this.get(roomID);
-
-        if (room && room.removePlayer(player))
-            return true;
-        return false;
+    public leaveRoom(player: Player, roomID?: number): boolean {
+        if (roomID !== undefined) {
+            const room = this.get(roomID);
+            if (room && room.removePlayer(player))
+                return true;
+            return false;
+        }
+        else {
+            let removed: boolean = false;
+            for (const [, room] of this.entries()) {
+                if (room.removePlayer(player))
+                    removed = true;
+            }
+            return removed;
+        }
     }
 
     // GETTERS
