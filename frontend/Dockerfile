@@ -7,14 +7,8 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
 COPY eslint.config.js ./
-# COPY postcss.config.js ./
-# COPY tailwind.config.js ./
 
 RUN npm install
-
-# COPY src/ ./src/
-# COPY public/ ./public/
-# COPY index.html ./
 
 EXPOSE 5173
 
