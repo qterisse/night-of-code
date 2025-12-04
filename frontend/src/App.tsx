@@ -1,20 +1,9 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-
 function App() {
-  const [message, setMessage] = useState('');
-
-  useEffect(() => {
-    fetch('/api/hello')
-      .then(res => res.json())
-      .then(data => setMessage(data.message))
-      .catch(err => console.error(err));
-  }, []);
 
   return (
-    <div className="App">
-      <h1>Vite + React + Backend</h1>
-      <p>{message || 'Loading...'}</p>
+    <div className="w-screen h-screen flex items-center justify-center">
+      <h1>Fresque du numerique</h1>
+      <p></p>
     </div>
   )
 }

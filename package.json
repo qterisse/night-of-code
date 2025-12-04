@@ -11,6 +11,8 @@
     "build:backend": "cd backend && npm run build"
   },
   "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "concurrently": "^8.2.2"
   },
   "repository": {
@@ -23,5 +25,11 @@
   "bugs": {
     "url": "https://github.com/qterisse/night-of-code/issues"
   },
-  "homepage": "https://github.com/qterisse/night-of-code#readme"
+  "homepage": "https://github.com/qterisse/night-of-code#readme",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.17",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "tailwindcss": "^4.1.17"
+  }
 }
