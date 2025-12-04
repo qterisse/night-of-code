@@ -4,6 +4,7 @@ export class Room {
     private _roomID: number;
     private _players: Map<number, Player> = new Map<number, Player>();
     private _state: "waiting" | "in_progress" | "finished" = "waiting";
+    private _playedCards: number[] = [];
 
     constructor (id: number, creator: Player) {
         this._roomID = id;
@@ -41,6 +42,10 @@ export class Room {
             return false;
     }
 
+    public playCard(cardID: number): void {
+        this._playedCards.push(cardID);
+    }
+
     // SETTERS
     public changeState(state: typeof this._state): void {
         if (state === this._state)
@@ -56,5 +61,9 @@ export class Room {
 
     public getState(): typeof this._state {
         return this._state;
+    }
+
+    public getNumberOfPlayers(): number {
+        return this._players.size;
     }
 }

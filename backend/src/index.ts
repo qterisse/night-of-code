@@ -45,6 +45,12 @@ io.on('connection', (socket: Socket) => {
 
     player.setUsername(username);
     const room = rooms.joinRoom(player);
+    if (!player.setRoom(room)) {
+      console.error('[ERROR]: could not set room for player');
+      room.removePlayer(player);
+      // TODO: Renvoyer une erreur
+      return;
+    }
 
     const roomName = `room-${room.getRoomID()}`;
 
@@ -66,6 +72,47 @@ io.on('connection', (socket: Socket) => {
     console.log(
       `Player ${playerId} joined room ${room.getRoomID()} (socket: ${socket.id})`
     );
+  });
+
+  socket.on('play-card', (cardID: number) => {
+    const player = players.get(socket.id);
+    if (!player) {
+      // TODO: Renvoyer une erreur
+      return;
+    }
+
+    if (!player.playCard(cardID)) {
+      // TODO: Renvoyer une erreur
+      return;
+    }
+
+    // TODO: Envoyer l'info aux autres joueurs
+  });
+
+  socket.on('start', () => {
+    const player = players.get(socket.id);
+    if (!player) {
+      // TODO: Renvoyer une erreur
+      return;
+    }
+
+    const room = player.getRoom();
+    if (!room) {
+      // TODO: Renvoyer une erreur
+      return;
+    }
+
+    if (room.getNumberOfPlayers() < 2) {
+      // TODO: Renvoyer une erreur (pas assez de joueurs)
+      return;
+    }
+    if (room.getState() !== "waiting") {
+      // TODO: Renvoyer une erreur (partie déjà commencée)
+      return;
+    }
+    room.changeState("in_progress");
+
+    // TODO: envoyer update aux joueurs de la room
   });
 
   socket.on('disconnect', () => {
