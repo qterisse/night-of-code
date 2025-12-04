@@ -17,7 +17,12 @@ export class Room {
                 if (p === player)
                     return false;
             });
+            if (!player.setRoom(this))
+                return false;
             this._players.set(this._players.size + 1, player);
+            if (this._players.size === 4)
+                this.changeState("in_progress");
+            console.log(`Player ${player.getUsername()} joined the room ${this._roomID}`);
             return true;
         }
         return false;
@@ -35,6 +40,7 @@ export class Room {
 
         if (idToDelete !== undefined) {
             this._players.delete(idToDelete);
+            console.log(`Player ${player.getUsername()} left the room ${this._roomID}`);
             // TODO: redistribuer ses cartes entre les autres joueurs
             return true;
         }

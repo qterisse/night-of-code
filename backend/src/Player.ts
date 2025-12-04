@@ -16,7 +16,7 @@ export class Player {
 
     public playCard(cardID: number): boolean {
         const index = this._hand.indexOf(cardID)
-        if (index !== -1 && this._room) {
+        if (index !== -1 && this._room && this._room.getState() !== "in_progress") {
             this._hand.splice(index, 1);
             this._room.playCard(cardID);
             return true;

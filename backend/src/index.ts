@@ -5,6 +5,14 @@ import { createServer } from 'http';
 import { Player } from './Player';
 import { Rooms } from './Rooms';
 
+interface UsernameData {
+  username: string;
+}
+
+interface CardData {
+  cardID: number;
+}
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -33,9 +41,9 @@ io.on('connection', (socket: Socket) => {
   players.set(socket.id, new Player(playerIDs, '', socket));
   playerIDs++;
 
-  socket.on('join-room', (username: string) => {
+  socket.on('join-room', (data: UsernameData) => {
 
-	  console.log("username: ", username);
+	  console.log("username: ", data.username);
     const player = players.get(socket.id);
 
     if (!player) {
@@ -43,11 +51,10 @@ io.on('connection', (socket: Socket) => {
       return;
     }
 
-    player.setUsername(username);
+    player.setUsername(data.username);
     const room = rooms.joinRoom(player);
-    if (!player.setRoom(room)) {
+    if (!room) {
       console.error('[ERROR]: could not set room for player');
-      room.removePlayer(player);
       // TODO: Renvoyer une erreur
       return;
     }
@@ -74,14 +81,14 @@ io.on('connection', (socket: Socket) => {
     );
   });
 
-  socket.on('play-card', (cardID: number) => {
+  socket.on('play-card', (data: CardData) => {
     const player = players.get(socket.id);
     if (!player) {
       // TODO: Renvoyer une erreur
       return;
     }
 
-    if (!player.playCard(cardID)) {
+    if (!player.playCard(data.cardID)) {
       // TODO: Renvoyer une erreur
       return;
     }
