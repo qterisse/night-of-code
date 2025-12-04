@@ -1,0 +1,27 @@
+{
+  "name": "night-of-code",
+  "version": "1.0.0",
+  "description": "Our Night of Code 2025 project :)",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qterisse/night-of-code.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/qterisse/night-of-code/issues"
+  },
+  "homepage": "https://github.com/qterisse/night-of-code#readme"
+}

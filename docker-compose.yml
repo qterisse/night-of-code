@@ -1,0 +1,33 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend/src:/app/src
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      volumes:
+        - ./frontend/src:/app/src
+        - ./frontend/public:/app/public
+        - ./frontend/index.html:/app/index.html
+      ports:
+        - "5173:5173"
+      networks:
+        - app-network
+      restart: always
+
+networks:
+  app-network:
+    driver: bridge
+
+# volumes:
