@@ -30,6 +30,9 @@ logs:
 backend-logs:
 	docker compose logs -f backend
 
+frontend-sh:
+	docker exec -it frontend sh
+
 # gateway-logs:
 # 	docker compose logs -f gateway
 

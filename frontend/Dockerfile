@@ -6,6 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
+COPY eslint.config.js ./
 # COPY postcss.config.js ./
 # COPY tailwind.config.js ./
 
@@ -17,5 +18,5 @@ RUN npm install
 
 EXPOSE 5173
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["npm", "run", "dev"]
 # CMD ["npm", "start", "--", "--host", "0.0.0.0"]
