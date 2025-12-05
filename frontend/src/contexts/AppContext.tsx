@@ -10,6 +10,7 @@ import type { Room } from "../types/Room";
 import { socket } from "../services/socket";
 import type { Player } from "../types/Player";
 import type { Card } from "../types/Card";
+import { cards } from "../data/cards";
 
 type AppContextValue = {
   playerId: number | null;
@@ -18,11 +19,21 @@ type AppContextValue = {
   setRoom: (room: Room | null) => void;
 	playedCards: Card[];
 	setPlayedCards: (card: Card[]) => void;
+	selectedCardID: number | null;
+	setSelectedCardID: (id: number | null) => void;
 };
+
+type PlayedCardPayload = {
+  playerId: number;
+  cardId: number;
+  success: boolean;
+};
+
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+  const [selectedCardID, setSelectedCardID] = useState<number | null>(null);
 	const [playedCards, setPlayedCards] = useState<Card[]>([]);
   const [playerId, setPlayerId] = useState<number | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
@@ -38,6 +49,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
 			setPlayerId(data.playerId);
 		setRoom(data.room);
 	}
+
+	const applyPlayedCardToRoom = (room: Room, data: PlayedCardPayload): Room => {
+		if (!data.success) return room;
+
+		return {
+			...room,
+			_players: room._players.map(player => {
+				if (player._id !== data.playerId) return player; // use _id if that's your field
+
+				return {
+					...player,
+					_hand: player._hand.filter(cardId => cardId !== data.cardId), // use your hand field
+				};
+			}),
+			_playedCards: [...room._playedCards, data.cardId], // optional but usually desired
+		};
+	};
 
 	useEffect(() => {
 		console.log("CONNECTING SOCKET");
@@ -60,6 +88,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
 		socket.on("error", (data) => {
 			console.log("ERROR:", data.message)
+		});
+
+		socket.on("played-card", (data: {playerId: number, cardId: number, success: boolean}) => {
+			if (data.success) {
+				const card = cards.find(card => card.id === data.cardId);
+				if (!card) return ;
+				setPlayedCards(c => ([...c, card]));
+				setSelectedCardID(null);
+				setRoom(prevRoom => prevRoom && applyPlayedCardToRoom(prevRoom, data));
+			}
 		})
 
 
@@ -75,7 +113,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPlayerId,
     room,
     setRoom,
-		playedCards, setPlayedCards
+		playedCards, setPlayedCards,
+		selectedCardID, setSelectedCardID
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

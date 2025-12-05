@@ -116,6 +116,7 @@ io.on('connection', (socket: Socket) => {
       return;
     }
     io.to(`room-${player.getRoom()?.getRoomID()}`).emit('played-card', {
+			playerId: player.getID(),
       cardId: data.cardID,
       success: true
     })
