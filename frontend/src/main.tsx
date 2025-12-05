@@ -6,6 +6,7 @@ import './index.css';
 import Lobby from './containers/Lobby.tsx';
 import { AppProvider } from './contexts/AppContext.tsx';
 import GamePage from './containers/GamePage.tsx';
+import SolutionPage from './containers/SolutionPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
 	{
     path: "/game",
     element: <GamePage />,
+  },
+  {
+    path: "/solution",
+    element: <SolutionPage />,
   },
 ]);
   

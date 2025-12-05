@@ -72,8 +72,8 @@ export const Lobby = () => {
   const playersCount = room._players.length;
 
   return (
-    <div className="relative w-screen h-screen flex flex-col items-center justify-center font-montserrat overflow-hidden">
-      <div className="flex flex-col items-stretch w-full max-w-xl">
+    <div className="relative w-screen h-screen flex flex-row items-center justify-center font-montserrat overflow-hidden">
+      <div className="flex flex-col items-stretch w-full max-w-xl absolute  right-5/10">
         <div className="border rounded-2xl border-cobalt-blue/40 bg-light-cream/60 backdrop-blur-sm px-6 py-5 flex flex-col gap-4">
 
           <div>
@@ -127,7 +127,25 @@ export const Lobby = () => {
 					</button>
 				</div>
       </div>
-
+      <div className="absolute right-0 bg-cobalt-blue text-light-cream w-150 h-full p-10 flex gap-2 flex-col">
+        <div>
+          <h2 className="font-gasoek-one text-4xl">Faites la connexion</h2>
+          <h3 className="font-medium text-2xl">Les regles du jeu</h3>
+          <div className="py-5">
+            <p>Chaque joueur possède un ensemble de cartes. Toutes les cartes sont posées collectivement, sans ordre de tour : les joueurs discutent, argumentent et coopèrent pour construire une seule chaîne logique.</p>
+            <p className="pt-5">Une règle unique :</p>
+            <p><strong>Chaque carte posée doit être la conséquence directe de la carte précédente.</strong></p>
+            <p className="pt-5">Les joueurs avancent ainsi étape par étape, en créant une suite causale cohérente — par exemple : « Je construis une maison » → « Donc j’achète des briques » → « Donc je fais venir un camion » → etc.</p>
+            <p>La premiere phase de la partie se termine lorsque toutes les cartes ont été posées et que la chaîne forme un enchaînement logique et compréhensible.</p>
+            <p className="pt-5">
+              Lors de la deuxième phase du jeu, un nouvel ensemble de cartes “actions” est révélé aux joueurs. Ils doivent alors débattre et s’accorder pour choisir, parmi ces cartes, les deux actions à la fois les plus impactantes et les plus faciles à mettre en place.
+            </p>
+          </div>
+        </div>
+        <div className="mx-auto mt-auto bottom-10 text-xs border rounded-full opacity-80 px-3 py-1 border-light-cream/50">
+          fait avec ❤︎ par <strong>milo niemaz</strong>, <strong>hugo lopez</strong> et <strong>quentin terisse</strong>
+        </div>
+      </div>
     </div>
   );
 

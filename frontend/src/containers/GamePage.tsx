@@ -1,12 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import GameCard from "../components/GameCard";
 import { useAppContext } from "../contexts/AppContext";
 import { cards } from "../data/cards";
+import { socket } from "../services/socket";
+import { useNavigate } from "react-router";
 
 const GamePage = () => {
 	const [selectedCardID, setSelectedCardID] = useState<number | null>(null);
     
 	const { room, playerId, playedCards } = useAppContext();
+	const [showEndBtn, setShowEndBtn] = useState(true)
+	const navigate = useNavigate();
+
+
+	const handleEndBtn = () => {
+		console.log("round-2 emit")
+		socket.emit("round-2");
+	}
+
+
+	useEffect(() => {
+		socket.on("receive-round-2", () => {
+			navigate("solution");
+		})
+	}, [])
+
+
+	useEffect(() => {
+		if (playedCards.length >= 10) {
+			setShowEndBtn(true);
+		}
+	}, [playedCards])
 
 	if (!room) {
 		return (
@@ -52,6 +76,11 @@ const GamePage = () => {
 					</div>
 				))}
 			</div>
+			{showEndBtn && (
+				<button onClick={handleEndBtn} className={`absolute right-20 bottom-20 w-40 text-center font-black uppercase text-xl bg-cobalt-blue text-light-cream px-9 py-6 cursor-pointer rounded-xl duration-200 peer-focus:shadow-xl hover:shadow-xl shadow-cobalt-blue/20`}>
+					<span>Suite...</span>
+				</button>
+			)}
 		</div>
 	);
 }

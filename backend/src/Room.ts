@@ -58,8 +58,10 @@ export class Room {
     public playCard(cardID: number): void {
         this._playedCards.push(cardID);
 
-        if (this._state === "round_1" && this._playedCards.length === 12)
+        if (this._state === "round_1" && this._playedCards.length === 10)
             this.changeState("intermission");
+        else if (this._state === "round_2" && this._playedCards.length === 4)
+            this.changeState("finished");
     }
 
     private shuffleCards(numberOfCards: number): boolean {
@@ -68,12 +70,14 @@ export class Room {
         for (let i = 0; i < numberOfCards; i++)
             cards[i] = i + 1;
 
+        
         for (let i = cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [cards[i], cards[j]] = [cards[j], cards[i]];
         }
+        const limit = numberOfCards >= 10 ? cards.length : 4;
         
-        for (let i = 0; i < cards.length; i++) {
+        for (let i = 0; i < limit; i++) {
             const player = this._players.get(i % this._players.size);
 
             if (player)
@@ -120,7 +124,7 @@ export class Room {
             }
             case ("round_2"): {
                 let i = 0;
-                while (!this.shuffleCards(10) && i < 5) {
+                while (!this.shuffleCards(4) && i < 5) {
                     console.error('[ERROR]: shuffleCards failed');
                     this.resetPlayersMapKeys(true);
                     i++;

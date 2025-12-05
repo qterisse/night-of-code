@@ -222,6 +222,35 @@ io.on('connection', (socket: Socket) => {
     socket.emit('id', id);
   });
 
+  socket.on('round-2', () => {
+    const player = players.get(socket.id);
+    if (!player) {
+      socket.emit('error', {
+        message: "Je ne te connais pas",
+        success: false
+      });
+      return;
+    }
+
+    const room = player.getRoom();
+    if (!room) {
+      socket.emit('error', {
+        message: "Vous n'êtes pas dans une partie",
+        success: false
+      });
+      return;
+    }
+
+    room.changeState("round_2");
+
+    console.log("send receive-round-2")
+
+    io.to(`room-${room.getRoomID()}`).emit('receive-round-2', {
+      success: true,
+      players: Array.from(room.getPlayers().values())
+    });
+  });
+
   socket.on('leave-room', () => {
     const player = players.get(socket.id);
     if (player)
