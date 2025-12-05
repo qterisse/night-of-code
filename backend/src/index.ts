@@ -155,8 +155,40 @@ io.on('connection', (socket: Socket) => {
     room.changeState("round_1");
 
     io.to(`room-${room.getRoomID()}`).emit('start-game', {
-      success: true
+      success: true,
+      players: Array.from(room.getPlayers().values())
     });
+  });
+
+  socket.on('get-id', () => {
+    const player = players.get(socket.id);
+    if (!player) {
+      socket.emit('error', {
+        message: "Je ne te connais pas",
+        success: false
+      });
+      return;
+    }
+
+    const room = player.getRoom();
+    if (!room) {
+      socket.emit('error', {
+        message: "Vous n'êtes pas dans une partie",
+        success: false
+      });
+      return;
+    }
+
+    const id = room.getPlayerID(player);
+    if (id < 0) {
+      socket.emit('error', {
+        message: "Erreur dans la récupération de l'id",
+        success: false
+      });
+      return;
+    }
+
+    socket.emit('id', id);
   });
 
   socket.on('disconnect', () => {

@@ -22,6 +22,14 @@ export class Player {
             return false;
     }
 
+    public addCardToHand(cardID: number): void {
+        this._hand.push(cardID);
+    }
+
+    public resetHand(): void {
+        this._hand = [];
+    }
+
     // SETTERS
     public setUsername(username: string): void {
         this._username = username;
