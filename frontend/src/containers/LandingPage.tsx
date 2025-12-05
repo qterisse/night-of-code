@@ -1,12 +1,11 @@
 import { LoaderCircle } from "lucide-react"
 import { useState } from "react"
 import { socket } from "../services/socket";
-import { useNavigate } from "react-router"
+import { useNavigate } from "react-router";
 
 function LandingPage() {
   const [loading, setLoading] = useState(false);
 	const navigate = useNavigate();
-
 
   const handleOnSubmit = (evt: any) => {
     evt.preventDefault();
@@ -15,6 +14,8 @@ function LandingPage() {
     socket.emit('join-room', {
       username: formData.get('username')
     });
+
+		navigate("/lobby");
   }
 
   return (

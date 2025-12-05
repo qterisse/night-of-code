@@ -4,8 +4,8 @@ export type Card = {
     image: string,
     imageSource?: string,
     facts: {
-        text: string,
-        source: string,
-        sourceURL: string,
+			text: string,
+			source: string,
+			sourceURL: string,
     }[],
 }

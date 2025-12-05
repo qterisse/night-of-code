@@ -1,12 +1,13 @@
 import { Apple } from "lucide-react";
 import type { Card } from "../types/Card";
 
-function GameCard({card, position}: {card: Card, position: string}) {
+function GameCard({card, position, marginLeft, isSelected = false}: {card?: Card, position: string, marginLeft: number, isSelected?: boolean}) {
+	if (!card) return ;
 
   return (
-    <div className={`hover:scale-100 ${position} hover:z-50 absolute scale-40 hover:-translate-y-50 bg-light-cream hover:shadow-2xl hover:rotate-0 duration-500 ease-in-out rotate-90 w-200 h-130 rounded-3xl border-4 border-double overflow-hidden flex flex-col`}>
+    <div style={{marginLeft: marginLeft}} className={`${position} ${isSelected ? "border-4 border-[yellow]" : "border-4 border-double"} hover:z-50 scale-40 bg-light-cream hover:shadow-2xl hover:rotate-0 ease-in-out w-200 h-130 rounded-3xl overflow-hidden flex flex-col`}>
       <div className="h-20 w-full border-b flex items-center gap-4 px-4 bg-linear-to-tl from-cobalt-blue/10 to-light-cream">
-        <div className="p-3 rounded-full border border-cobalt-blue/80 border">
+        <div className={`p-3 rounded-full border ${isSelected ? "border-[yellow]" : "border-cobalt-blue/80"}`}>
           <Apple strokeWidth={1.5} className="" />
         </div>
         <h2 className="text-4xl font-medium text-cobalt-blue/80">{card.title}</h2>
