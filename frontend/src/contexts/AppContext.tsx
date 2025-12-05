@@ -9,17 +9,21 @@ import {
 import type { Room } from "../types/Room";
 import { socket } from "../services/socket";
 import type { Player } from "../types/Player";
+import type { Card } from "../types/Card";
 
 type AppContextValue = {
   playerId: number | null;
   setPlayerId: (id: number | null) => void;
   room: Room | null;
   setRoom: (room: Room | null) => void;
+	playedCards: Card[];
+	setPlayedCards: (card: Card[]) => void;
 };
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
+	const [playedCards, setPlayedCards] = useState<Card[]>([]);
   const [playerId, setPlayerId] = useState<number | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
 
@@ -30,7 +34,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
 		data.room._players = data.players;
 
-		setPlayerId(data.playerId);
+		if (data.playerId)
+			setPlayerId(data.playerId);
 		setRoom(data.room);
 	}
 
@@ -40,11 +45,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
 			console.log("Connecté au serveur socket, id:", socket.id);
 		});
 
-		
-
 		socket.on("joined-room", (data: {
 			message: string,
-      playerId: number,
+			playerId: number,
       room: Room,
       players: Player[]
 		}) => {
@@ -72,6 +75,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setPlayerId,
     room,
     setRoom,
+		playedCards, setPlayedCards
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
