@@ -31,12 +31,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
 		socket.on("joined-room", (data: any) => {
 			console.log("Joined room:", data);
 
+			console.log("playerssss:", data.players);
+
+			data.room._players = data.players;
+
 			setPlayerId(data.playerId);
 			setRoom(data.room);
 		});
 
 		socket.on("room-update", (data: any) => {
 			console.log("Room update:", data);
+
+			data.room._players = data.players;
+
 			setPlayerId(data.playerId);
 			setRoom(data.room);
 		});

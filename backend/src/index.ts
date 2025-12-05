@@ -73,7 +73,7 @@ io.on('connection', (socket: Socket) => {
       message: 'Player joined room (socket)',
       playerId,
       room,
-      players: Array.from(room.getPlayers())
+      players: Array.from(room.getPlayers().values())
     });
 
     // On peut aussi prévenir tous les joueurs de la même room
