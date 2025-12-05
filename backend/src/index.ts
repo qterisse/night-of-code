@@ -38,7 +38,7 @@ let playerIDs = 1;
 
 io.on('connection', (socket: Socket) => {
   console.log('Nouveau client connecté :', socket.id);
-  players.set(socket.id, new Player(playerIDs, '', socket));
+  players.set(socket.id, new Player(playerIDs, ''));
   playerIDs++;
 
   socket.on('join-room', (data: UsernameData) => {
@@ -55,7 +55,10 @@ io.on('connection', (socket: Socket) => {
     const room = rooms.joinRoom(player);
     if (!room) {
       console.error('[ERROR]: could not set room for player');
-      // TODO: Renvoyer une erreur
+      socket.emit('error', {
+        message: "Vous ne pouvez pas rejoindre de nouvelle partie",
+        success: false
+      });
       return;
     }
 
@@ -65,10 +68,12 @@ io.on('connection', (socket: Socket) => {
 
     const playerId = player.getID();
     // On envoie une réponse juste à ce joueur
+	console.log("before room:", room);
     socket.emit('joined-room', {
       message: 'Player joined room (socket)',
       playerId,
       room,
+      players: Array.from(room.getPlayers().values())
     });
 
     // On peut aussi prévenir tous les joueurs de la même room
@@ -88,12 +93,32 @@ io.on('connection', (socket: Socket) => {
       return;
     }
 
+    if (Number.isNaN(data.cardID)) {
+      socket.emit('error', {
+        message: "Requête incorrecte",
+        success: false
+      });
+      return;
+    }
+
     if (!player.playCard(data.cardID)) {
-      // TODO: Renvoyer une erreur
+      socket.emit('error', {
+        message: "Impossible de jouer la carte",
+        success: false
+      });
       return;
     }
 
     // TODO: Envoyer l'info aux autres joueurs
+    const room = player.getRoom();
+    if (!room) {
+      console.error('[ERROR]: how tf the player could play but is not in a game??');
+      return;
+    }
+    io.to(`room-${player.getRoom()?.getRoomID()}`).emit('played-card', {
+      cardId: data.cardID,
+      success: true
+    })
   });
 
   socket.on('start', () => {
@@ -105,21 +130,32 @@ io.on('connection', (socket: Socket) => {
 
     const room = player.getRoom();
     if (!room) {
-      // TODO: Renvoyer une erreur
+      socket.emit('error', {
+        message: "Vous n'êtes pas dans une partie",
+        success: false
+      });
       return;
     }
 
     if (room.getNumberOfPlayers() < 2) {
-      // TODO: Renvoyer une erreur (pas assez de joueurs)
+      socket.emit('error', {
+        message: "Pas assez de joueurs",
+        success: false
+      });
       return;
     }
     if (room.getState() !== "waiting") {
-      // TODO: Renvoyer une erreur (partie déjà commencée)
+      socket.emit('error', {
+        message: "Partie déjà commencée",
+        success: false
+      })
       return;
     }
-    room.changeState("in_progress");
+    room.changeState("round_1");
 
-    // TODO: envoyer update aux joueurs de la room
+    io.to(`room-${room.getRoomID()}`).emit('start-game', {
+      success: true
+    });
   });
 
   socket.on('disconnect', () => {

@@ -28,14 +28,24 @@ export function AppProvider({ children }: { children: ReactNode }) {
 			console.log("Connecté au serveur socket, id:", socket.id);
 		});
 
-		socket.on("joined-room", (data: Room) => {
+		socket.on("joined-room", (data: any) => {
 			console.log("Joined room:", data);
-			setRoom(data);
+
+			console.log("playerssss:", data.players);
+
+			data.room._players = data.players;
+
+			setPlayerId(data.playerId);
+			setRoom(data.room);
 		});
 
-		socket.on("room-update", (data: Room) => {
+		socket.on("room-update", (data: any) => {
 			console.log("Room update:", data);
-			setRoom(data);
+
+			data.room._players = data.players;
+
+			setPlayerId(data.playerId);
+			setRoom(data.room);
 		});
 
 		// return () => {

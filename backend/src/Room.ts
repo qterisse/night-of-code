@@ -3,7 +3,7 @@ import { Player } from "./Player";
 export class Room {
     private _roomID: number;
     private _players: Map<number, Player> = new Map<number, Player>();
-    private _state: "waiting" | "in_progress" | "finished" = "waiting";
+    private _state: "waiting" | "round_1" | "intermission" | "round_2" | "finished" = "waiting";
     private _playedCards: number[] = [];
 
     constructor (id: number, creator: Player) {
@@ -21,7 +21,7 @@ export class Room {
                 return false;
             this._players.set(this._players.size + 1, player);
             if (this._players.size === 4)
-                this.changeState("in_progress");
+                this.changeState("round_1");
             console.log(`Player ${player.getUsername()} joined the room ${this._roomID}`);
             return true;
         }
@@ -50,6 +50,19 @@ export class Room {
 
     public playCard(cardID: number): void {
         this._playedCards.push(cardID);
+
+        if (this._playedCards.length === 12)
+            this.changeState("intermission");
+    }
+
+    private shuffleCards(): void {
+        let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+        for (let i = cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        console.log('Shuffled cards:', cards);
     }
 
     // SETTERS
@@ -58,6 +71,9 @@ export class Room {
             return;
 
         this._state = state;
+        if (this._state === "round_1") {
+            this.shuffleCards();
+        }
     }
 
     // GETTERS
@@ -67,6 +83,10 @@ export class Room {
 
     public getState(): typeof this._state {
         return this._state;
+    }
+
+    public getPlayers(): Map<number, Player> {
+        return this._players;
     }
 
     public getNumberOfPlayers(): number {

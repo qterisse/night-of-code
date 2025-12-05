@@ -1,5 +1,8 @@
+import type { Player } from "./Player";
+
 export type Room = {
-  id: number;
-  players: number[];
-  isOpen: boolean;
+	_roomID: number;
+	_players: Map<number, Player>;
+	_state: "waiting" | "in_progress" | "finished";
+	_playedCards: number[];
 };
