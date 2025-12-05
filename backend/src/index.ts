@@ -191,6 +191,12 @@ io.on('connection', (socket: Socket) => {
     socket.emit('id', id);
   });
 
+  socket.on('leave-room', () => {
+    const player = players.get(socket.id);
+    if (player)
+      rooms.leaveRoom(player);
+  });
+
   socket.on('disconnect', () => {
     console.log('Client déconnecté :', socket.id);
     // Ici tu peux gérer la sortie du joueur de la room si besoin
