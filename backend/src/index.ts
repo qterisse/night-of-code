@@ -38,7 +38,7 @@ let playerIDs = 1;
 
 io.on('connection', (socket: Socket) => {
   console.log('Nouveau client connecté :', socket.id);
-  players.set(socket.id, new Player(playerIDs, '', socket));
+  players.set(socket.id, new Player(playerIDs, ''));
   playerIDs++;
 
   socket.on('join-room', (data: UsernameData) => {
@@ -72,6 +72,7 @@ io.on('connection', (socket: Socket) => {
       message: 'Player joined room (socket)',
       playerId,
       room,
+      players: Array.from(room.getPlayers())
     });
 
     // On peut aussi prévenir tous les joueurs de la même room

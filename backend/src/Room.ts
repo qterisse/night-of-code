@@ -55,12 +55,25 @@ export class Room {
             this.changeState("intermission");
     }
 
+    private shuffleCards(): void {
+        let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+        for (let i = cards.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [cards[i], cards[j]] = [cards[j], cards[i]];
+        }
+        console.log('Shuffled cards:', cards);
+    }
+
     // SETTERS
     public changeState(state: typeof this._state): void {
         if (state === this._state)
             return;
 
         this._state = state;
+        if (this._state === "round_1") {
+            this.shuffleCards();
+        }
     }
 
     // GETTERS
@@ -70,6 +83,10 @@ export class Room {
 
     public getState(): typeof this._state {
         return this._state;
+    }
+
+    public getPlayers(): Map<number, Player> {
+        return this._players;
     }
 
     public getNumberOfPlayers(): number {
