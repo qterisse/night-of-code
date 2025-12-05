@@ -9,6 +9,10 @@
   --font-montserrat: "Montserrat", sans-serif; 
 }
 
+ul li {
+  @apply list-disc
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
