@@ -22,13 +22,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [playerId, setPlayerId] = useState<number | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
 
-	useEffect(() => {
-		console.log("CONNECTING SOCKET");
-		socket.on("connect", () => {
-			console.log("Connecté au serveur socket, id:", socket.id);
-		});
-
-		socket.on("joined-room", (data: any) => {
+	const handleRoomData = (data: any) => {
 			console.log("Joined room:", data);
 
 			console.log("playerssss:", data.players);
@@ -37,15 +31,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
 			setPlayerId(data.playerId);
 			setRoom(data.room);
+	}
+
+	useEffect(() => {
+		console.log("CONNECTING SOCKET");
+		socket.on("connect", () => {
+			console.log("Connecté au serveur socket, id:", socket.id);
+		});
+
+		
+
+		socket.on("joined-room", (data: any) => {
+			handleRoomData(data);
 		});
 
 		socket.on("room-update", (data: any) => {
-			console.log("Room update:", data);
-
-			data.room._players = data.players;
-
-			setPlayerId(data.playerId);
-			setRoom(data.room);
+			handleRoomData(data);
 		});
 
 		// return () => {
