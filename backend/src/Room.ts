@@ -8,7 +8,7 @@ export class Room {
 
     constructor (id: number, creator: Player) {
         this._roomID = id;
-        this._players.set(1, creator);
+        this._players.set(0, creator);
     }
 
     public addPlayer(player: Player): boolean {
@@ -23,6 +23,7 @@ export class Room {
             if (this._players.size === 4)
                 this.changeState("round_1");
             console.log(`Player ${player.getUsername()} joined the room ${this._roomID}`);
+            console.log('Current players:', this._players);
             return true;
         }
         return false;
@@ -39,9 +40,16 @@ export class Room {
         }
 
         if (idToDelete !== undefined) {
+            const playerToDelete = this._players.get(idToDelete);
+            let cards: number[] = [];
+            if (playerToDelete)
+                cards = playerToDelete.getHand();
             this._players.delete(idToDelete);
             console.log(`Player ${player.getUsername()} left the room ${this._roomID}`);
-            // TODO: redistribuer ses cartes entre les autres joueurs
+            this.resetPlayersMapKeys();
+            for (let i = 0; i < cards.length; i++) {
+                this._players.get(i % this._players.size)?.addCardToHand(cards[i]);
+            }
             return true;
         }
         else
@@ -55,7 +63,7 @@ export class Room {
             this.changeState("intermission");
     }
 
-    private shuffleCards(): void {
+    private shuffleCards(): boolean {
         let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
         for (let i = cards.length - 1; i > 0; i--) {
@@ -63,9 +71,27 @@ export class Room {
             [cards[i], cards[j]] = [cards[j], cards[i]];
         }
         
-        // for (let i = 0; i < cards.length; i++) {
+        for (let i = 0; i < cards.length; i++) {
+            const player = this._players.get(i % this._players.size);
 
-        // }
+            if (player)
+                player.addCardToHand(cards[i]);
+            else
+                return false;
+        }
+        return true;
+    }
+
+    private resetPlayersMapKeys(resetHands: boolean = false): void {
+        const newMap: Map<number, Player> = new Map<number, Player>();
+        let index = 0;
+
+        this._players.forEach((player) => {
+            newMap.set(index, player);
+            index++;
+            if (resetHands)
+                player.resetHand();
+        });
     }
 
     // SETTERS
@@ -75,7 +101,14 @@ export class Room {
 
         this._state = state;
         if (this._state === "round_1") {
-            this.shuffleCards();
+            let i = 0;
+            while (!this.shuffleCards() && i < 5) {
+                console.error('[ERROR]: shuffleCards failed');
+                this.resetPlayersMapKeys(true);
+                i++;
+            }
+            if (i >= 5)
+                console.error('[ERROR]: could not shuffle cards');
         }
     }
 
