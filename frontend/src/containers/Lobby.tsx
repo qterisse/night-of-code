@@ -2,16 +2,18 @@ import { useCallback, useEffect, useRef } from "react";
 import { useAppContext } from "../contexts/AppContext";
 import { socket } from "../services/socket";
 import type { Room } from "../types/Room";
+import { useNavigate } from "react-router"
 
 
 const MAX_PLAYERS = 4;
 
 export const Lobby = () => {
-  const { room, playerId } = useAppContext() as {
+  const { room, playerId, setRoom } = useAppContext() as {
 		room: Room | null,
-		playerId: number
-
+		playerId: number,
+		setRoom: (room: Room | null) => void
 	}
+	const navigate = useNavigate();
   
 
   const hasStartedRef = useRef(false);
@@ -35,6 +37,20 @@ export const Lobby = () => {
 		hasStartedRef.current = true;
 		socket.emit("start", { roomID: room._roomID });
 	},[room])
+
+	useEffect(() => {
+		socket.on("start-game", (data: any) => {
+			console.log("start game received")
+			let newRoom = room;
+			console.log("newRoom:", newRoom)
+			if (!newRoom) return;
+			newRoom._players = data.players;
+			setRoom(newRoom);
+			console.log("navigating to game")
+			navigate("/game");
+		});
+  }, [room]);
+
 	
 
   if (!room) {

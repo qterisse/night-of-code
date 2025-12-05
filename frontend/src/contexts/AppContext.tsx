@@ -49,6 +49,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 			handleRoomData(data);
 		});
 
+		socket.on("error", (data) => {
+			console.log("ERROR:", data.message)
+		})
+
+
 		// return () => {
 		// 	console.log("disconnecingidgns")
     //   socket.disconnect();
