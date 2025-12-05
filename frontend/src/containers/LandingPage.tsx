@@ -15,7 +15,7 @@ function LandingPage() {
         username: formData.get('username')
     })
 
-		navigate("/game");
+		navigate("/lobby");
 
   }
 

@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from 'react-router';
 import LandingPage from './containers/LandingPage.tsx';
 import './index.css';
 import Lobby from './containers/Lobby.tsx';
-import GamePage from './containers/GamePage.tsx';
 import { AppProvider } from './contexts/AppContext.tsx';
 
 const router = createBrowserRouter([
@@ -18,7 +17,7 @@ const router = createBrowserRouter([
   },
 	{
     path: "/game",
-    element: <GamePage />,
+    element: <Lobby />,
   },
 ]);
   
