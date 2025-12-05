@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { Room } from "../types/Room";
 import { socket } from "../services/socket";
+import type { Player } from "../types/Player";
 
 type AppContextValue = {
   playerId: number | null;
@@ -22,31 +23,42 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [playerId, setPlayerId] = useState<number | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
 
+	const handleRoomData = (data: any) => {
+		console.log("Joined room data.playerId:", data.playerId);
+
+		console.log("playerssss:", data.players);
+
+		data.room._players = data.players;
+
+		setPlayerId(data.playerId);
+		setRoom(data.room);
+	}
+
 	useEffect(() => {
 		console.log("CONNECTING SOCKET");
 		socket.on("connect", () => {
 			console.log("Connecté au serveur socket, id:", socket.id);
 		});
 
-		socket.on("joined-room", (data: any) => {
-			console.log("Joined room:", data);
+		
 
-			console.log("playerssss:", data.players);
-
-			data.room._players = data.players;
-
-			setPlayerId(data.playerId);
-			setRoom(data.room);
+		socket.on("joined-room", (data: {
+			message: string,
+      playerId: number,
+      room: Room,
+      players: Player[]
+		}) => {
+			handleRoomData(data);
 		});
 
 		socket.on("room-update", (data: any) => {
-			console.log("Room update:", data);
-
-			data.room._players = data.players;
-
-			setPlayerId(data.playerId);
-			setRoom(data.room);
+			handleRoomData(data);
 		});
+
+		socket.on("error", (data) => {
+			console.log("ERROR:", data.message)
+		})
+
 
 		// return () => {
 		// 	console.log("disconnecingidgns")

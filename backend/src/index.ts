@@ -68,7 +68,6 @@ io.on('connection', (socket: Socket) => {
 
     const playerId = player.getID();
     // On envoie une réponse juste à ce joueur
-	console.log("before room:", room);
     socket.emit('joined-room', {
       message: 'Player joined room (socket)',
       playerId,
@@ -79,6 +78,7 @@ io.on('connection', (socket: Socket) => {
     // On peut aussi prévenir tous les joueurs de la même room
     io.to(roomName).emit('room-update', {
       room,
+      players: Array.from(room.getPlayers().values())
     });
 
     console.log(
@@ -124,6 +124,10 @@ io.on('connection', (socket: Socket) => {
   socket.on('start', () => {
     const player = players.get(socket.id);
     if (!player) {
+	  	socket.emit('error', {
+      	message: "Vous n'existez pas !",
+        success: false
+      });
       // TODO: Renvoyer une erreur
       return;
     }
@@ -154,8 +158,46 @@ io.on('connection', (socket: Socket) => {
     room.changeState("round_1");
 
     io.to(`room-${room.getRoomID()}`).emit('start-game', {
-      success: true
+      success: true,
+      players: Array.from(room.getPlayers().values())
     });
+  });
+
+  socket.on('get-id', () => {
+    const player = players.get(socket.id);
+    if (!player) {
+      socket.emit('error', {
+        message: "Je ne te connais pas",
+        success: false
+      });
+      return;
+    }
+
+    const room = player.getRoom();
+    if (!room) {
+      socket.emit('error', {
+        message: "Vous n'êtes pas dans une partie",
+        success: false
+      });
+      return;
+    }
+
+    const id = room.getPlayerID(player);
+    if (id < 0) {
+      socket.emit('error', {
+        message: "Erreur dans la récupération de l'id",
+        success: false
+      });
+      return;
+    }
+
+    socket.emit('id', id);
+  });
+
+  socket.on('leave-room', () => {
+    const player = players.get(socket.id);
+    if (player)
+      rooms.leaveRoom(player);
   });
 
   socket.on('disconnect', () => {
