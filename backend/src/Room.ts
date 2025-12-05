@@ -4,7 +4,7 @@ export class Room {
     private _roomID: number;
     private _players: Map<number, Player> = new Map<number, Player>();
     private _state: "waiting" | "round_1" | "intermission" | "round_2" | "finished" = "waiting";
-    private _playedCards: number[] = [];
+    private _playedCards: number[] = [0];
 
     constructor (id: number, creator: Player) {
         this._roomID = id;
@@ -64,7 +64,7 @@ export class Room {
     }
 
     private shuffleCards(): boolean {
-        let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+        let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
         for (let i = cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -127,5 +127,13 @@ export class Room {
 
     public getNumberOfPlayers(): number {
         return this._players.size;
+    }
+
+    public getPlayerID(player: Player): number {
+        this._players.forEach((p, id) => {
+            if (p === player)
+                return id;
+        });
+        return -1;
     }
 }
