@@ -59,7 +59,7 @@ export class Room {
     public playCard(cardID: number): void {
         this._playedCards.push(cardID);
 
-        if (this._playedCards.length === 12)
+        if (this._state === "round_1" && this._playedCards.length === 12)
             this.changeState("intermission");
     }
 

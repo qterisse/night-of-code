@@ -7,9 +7,10 @@ COPY package*.json ./
 COPY tsconfig.json ./
 
 RUN npm install
+ENV PROD=FALSE
 
 EXPOSE 3001
 
 # maybe change this
-# CMD ["npm", "run", "dev"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
+# CMD ["npm", "start"]
