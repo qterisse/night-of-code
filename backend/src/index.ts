@@ -79,6 +79,7 @@ io.on('connection', (socket: Socket) => {
     // On peut aussi prévenir tous les joueurs de la même room
     io.to(roomName).emit('room-update', {
       room,
+      players: Array.from(room.getPlayers().values())
     });
 
     console.log(

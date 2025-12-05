@@ -19,7 +19,7 @@ export class Room {
             });
             if (!player.setRoom(this))
                 return false;
-            this._players.set(this._players.size + 1, player);
+            this._players.set(this._players.size, player);
             if (this._players.size === 4)
                 this.changeState("round_1");
             console.log(`Player ${player.getUsername()} joined the room ${this._roomID}`);
@@ -62,7 +62,10 @@ export class Room {
             const j = Math.floor(Math.random() * (i + 1));
             [cards[i], cards[j]] = [cards[j], cards[i]];
         }
-        console.log('Shuffled cards:', cards);
+        
+        // for (let i = 0; i < cards.length; i++) {
+
+        // }
     }
 
     // SETTERS
