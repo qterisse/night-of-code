@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { Room } from "../types/Room";
 import { socket } from "../services/socket";
+import type { Player } from "../types/Player";
 
 type AppContextValue = {
   playerId: number | null;
@@ -23,14 +24,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [room, setRoom] = useState<Room | null>(null);
 
 	const handleRoomData = (data: any) => {
-			console.log("Joined room:", data);
+		console.log("Joined room data.playerId:", data.playerId);
 
-			console.log("playerssss:", data.players);
+		console.log("playerssss:", data.players);
 
-			data.room._players = data.players;
+		data.room._players = data.players;
 
-			setPlayerId(data.playerId);
-			setRoom(data.room);
+		setPlayerId(data.playerId);
+		setRoom(data.room);
 	}
 
 	useEffect(() => {
@@ -41,7 +42,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
 		
 
-		socket.on("joined-room", (data: any) => {
+		socket.on("joined-room", (data: {
+			message: string,
+      playerId: number,
+      room: Room,
+      players: Player[]
+		}) => {
 			handleRoomData(data);
 		});
 

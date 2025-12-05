@@ -38,6 +38,12 @@ export const Lobby = () => {
 		socket.emit("start", { roomID: room._roomID });
 	},[room])
 
+	const handleLeave = useCallback(() => {
+		console.log("handleLeave");
+		socket.emit("leave-room");
+		navigate("/");
+	},[])
+
 	useEffect(() => {
 		socket.on("start-game", (data: any) => {
 			console.log("start game received")
@@ -115,6 +121,11 @@ export const Lobby = () => {
             </ul>
           </div>
         </div>
+				<div className={`flex items-center justify-center flex-col gap-2  `}> 
+					<button onClick={handleLeave} className={` w-40 self-auto mt-6 text-center font-black uppercase text-xs bg-red-500 text-light-cream px-6 py-3 cursor-pointer rounded-xl duration-200 hover:shadow-xl`}>
+						<span>Quitter</span>
+					</button>
+				</div>
       </div>
 
     </div>
