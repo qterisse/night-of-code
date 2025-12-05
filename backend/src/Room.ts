@@ -3,7 +3,7 @@ import { Player } from "./Player";
 export class Room {
     private _roomID: number;
     private _players: Map<number, Player> = new Map<number, Player>();
-    private _state: "waiting" | "in_progress" | "finished" = "waiting";
+    private _state: "waiting" | "round_1" | "intermission" | "round_2" | "finished" = "waiting";
     private _playedCards: number[] = [];
 
     constructor (id: number, creator: Player) {
@@ -21,7 +21,7 @@ export class Room {
                 return false;
             this._players.set(this._players.size + 1, player);
             if (this._players.size === 4)
-                this.changeState("in_progress");
+                this.changeState("round_1");
             console.log(`Player ${player.getUsername()} joined the room ${this._roomID}`);
             return true;
         }
@@ -50,6 +50,9 @@ export class Room {
 
     public playCard(cardID: number): void {
         this._playedCards.push(cardID);
+
+        if (this._playedCards.length === 12)
+            this.changeState("intermission");
     }
 
     // SETTERS
