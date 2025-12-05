@@ -23,7 +23,6 @@ export class Room {
             if (this._players.size === 4)
                 this.changeState("round_1");
             console.log(`Player ${player.getUsername()} joined the room ${this._roomID}`);
-            console.log('Current players:', this._players);
             return true;
         }
         return false;

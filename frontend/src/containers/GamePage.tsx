@@ -1,43 +1,32 @@
-import { useEffect } from "react";
 import { useAppContext } from "../contexts/AppContext";
-import { socket } from "../services/socket";
-
-
 
 const GamePage = () => {
+    
+	const { room, playerId } = useAppContext();
 
-	const { room } = useAppContext();
-
-	
-	// let totoroom = {
-	// 	players: [],
-	// 	state: "", 
-	// 	whoamiID: 1 // besoin de savoir qui je suis
-
-	// }
-
-	useEffect(() => {
-		if (!room) return;
-		console.log('my room:', room);
-		if (room?._players.size >= 4) {
-			socket.emit("start");
-		}
-	}, [room]);
-
-
+	if (!room) {
+		return (
+			<div className="relative w-screen h-screen flex flex-col items-center justify-center font-montserrat">
+				Loading...
+			</div>
+		)
+	}
 
 	return (
-    <div className="relative w-screen px-30 h-screen flex flex-col items-center justify-center font-montserrat">
-    	<div className="border border-2 my-30 rounded-md flex-1 w-full items-center justify-center font-montserrat">
-				{room?._state == "waiting" && (
-					<p>
-						Waiting for players...
-					</p>
-				)}
+		<div className="relative w-screen h-screen flex flex-col items-center justify-center font-montserrat">
+			<div className="flex max-w-">
+				{room._players.map((player, index) => console.log(player, playerId) || player._id !== playerId && (
+					<div key={index} className="flex-grow">{player._username}</div>
+				))}
 			</div>
+			<div>
 
+			</div>
+			<div>
+
+			</div>
 		</div>
-	)
+	);
 }
 
 export default GamePage;

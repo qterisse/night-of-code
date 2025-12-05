@@ -96,7 +96,6 @@ io.on('connection', (socket: Socket) => {
 
     const playerId = player.getID();
     // On envoie une réponse juste à ce joueur
-	console.log("before room:", room);
     socket.emit('joined-room', {
       message: 'Player joined room (socket)',
       playerId,
@@ -153,6 +152,10 @@ io.on('connection', (socket: Socket) => {
   socket.on('start', () => {
     const player = players.get(socket.id);
     if (!player) {
+	  	socket.emit('error', {
+      	message: "Vous n'existez pas !",
+        success: false
+      });
       // TODO: Renvoyer une erreur
       return;
     }

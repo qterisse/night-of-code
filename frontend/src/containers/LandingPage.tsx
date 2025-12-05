@@ -10,13 +10,11 @@ function LandingPage() {
 
   const handleOnSubmit = (evt: any) => {
     evt.preventDefault();
+    setLoading(true);
     const formData = new FormData(evt.target);
     socket.emit('join-room', {
-        username: formData.get('username')
-    })
-
-		navigate("/game");
-
+      username: formData.get('username')
+    });
   }
 
   return (
@@ -26,9 +24,9 @@ function LandingPage() {
         <p className="text-lg text-right mr-5">Apprendre la sobriété numérique en quelques clics</p>
       </div>
 
-      <form onSubmit={handleOnSubmit} className="flex items-stretch">
-        <input name="username" maxLength={25} placeholder="Comment tu t'appelles ?" className="border rounded-l-xl focus:outline-none px-4" />
-        <button type="submit" className={`w-30 text-center font-black uppercase text-xl bg-cobalt-blue text-light-cream px-6 py-3 cursor-pointer rounded-r-xl duration-200 hover:shadow-xl`}>
+      <form onSubmit={handleOnSubmit} className="flex items-stretch h-13">
+        <input name="username" maxLength={25} placeholder="Comment tu t'appelles ?" className="peer border rounded-l-xl focus:outline-none px-4" />
+        <button type="submit" className={`w-30 text-center font-black uppercase text-xl bg-cobalt-blue text-light-cream px-6 py-3 cursor-pointer rounded-r-xl duration-200 peer-focus:shadow-xl hover:shadow-xl shadow-cobalt-blue/20`}>
           {loading ? (<LoaderCircle className={loading ? "animate-spin mx-auto" : ""}/>) : (<span>Jouer</span>)}
         </button>
       </form>
