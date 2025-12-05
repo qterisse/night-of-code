@@ -18,17 +18,15 @@ function getFourRandomUnique() {
 function SolutionPage() {
 
     const randoms = getFourRandomUnique();
-    const positions = ["absolute top-left", "absolute top-right", "absolute bottom-left", "absolute bottom-right"];
 
     console.log(randoms);
 
     return (
-        <div>
+        <div className="grid grid-rows-2 grid-cols-2">
             {randoms.map((index, i) => (
                 <SolutionCard 
                     key={i}
                     card={solutions[index]}
-                    position={positions[i]}
                 />
             ))}
         </div>
