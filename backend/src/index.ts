@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import { Socket, Server } from 'socket.io';
-import { createServer } from 'http';
-import { Player } from './Player';
-import { Rooms } from './Rooms';
+import express from "express";
+import cors from "cors";
+import { Socket, Server } from "socket.io";
+import { createServer } from "http";
+import { Player } from "./Player";
+import { Rooms } from "./Rooms";
 
 interface UsernameData {
   username: string;
@@ -13,48 +13,86 @@ interface CardData {
   cardID: number;
 }
 
+console.log("STARTING SERVER...");
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // app.use(cors());
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://night-of-code-frontend-c18a323b3ae4.herokuapp.com'
+  "http://localhost:5173",
+  "https://night-of-code-frontend-c18a323b3ae4.herokuapp.com",
 ].filter(Boolean); // Remove undefined
 
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE']
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or Postman)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  })
+);
 
 app.use(express.json());
+
+app.get("/", (req, res) => {
+  console.log("ICIIIIIIIIIII");
+  res.json({
+    message: "Night of Code Backend API",
+    status: "running",
+    version: "1.0.0",
+    endpoints: {
+      health: "/health",
+      socketio: "/socket.io",
+    },
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    status: "ok",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    rooms: rooms.size,
+    connectedPlayers: players.size,
+  });
+});
+
+app.get("/api/status", (req, res) => {
+  res.json({
+    success: true,
+    data: {
+      activeRooms: rooms.size,
+      activePlayers: players.size,
+      serverTime: new Date().toISOString(),
+    },
+  });
+});
 
 const httpServer = createServer(app);
 
 // const io = new Server(httpServer, {
-  //   cors: {
-    //     origin: '*',
-    //     credentials: true
-    //   },
-    // });
+//   cors: {
+//     origin: '*',
+//     credentials: true
+//   },
+// });
 const io = new Server(httpServer, {
   cors: {
     origin: allowedOrigins,
-    methods: ['GET', 'POST'],
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
-    
+
 // app.get('/api/hello', (req, res) => {
 // 	console.log("hello log");
 // 	res.json({ message: 'Hello from backenddd!' });
@@ -64,28 +102,27 @@ const rooms = new Rooms();
 const players: Map<string, Player> = new Map<string, Player>();
 let playerIDs = 1;
 
-io.on('connection', (socket: Socket) => {
-  console.log('Nouveau client connecté :', socket.id);
-  players.set(socket.id, new Player(playerIDs, ''));
+io.on("connection", (socket: Socket) => {
+  console.log("Nouveau client connecté :", socket.id);
+  players.set(socket.id, new Player(playerIDs, ""));
   playerIDs++;
 
-  socket.on('join-room', (data: UsernameData) => {
-
-	  console.log("username: ", data.username);
+  socket.on("join-room", (data: UsernameData) => {
+    console.log("username: ", data.username);
     const player = players.get(socket.id);
 
     if (!player) {
-      console.error('[ERROR]: unknown player, id:', socket.id);
+      console.error("[ERROR]: unknown player, id:", socket.id);
       return;
     }
 
     player.setUsername(data.username);
     const room = rooms.joinRoom(player);
     if (!room) {
-      console.error('[ERROR]: could not set room for player');
-      socket.emit('error', {
+      console.error("[ERROR]: could not set room for player");
+      socket.emit("error", {
         message: "Vous ne pouvez pas rejoindre de nouvelle partie",
-        success: false
+        success: false,
       });
       return;
     }
@@ -96,26 +133,28 @@ io.on('connection', (socket: Socket) => {
 
     const playerId = player.getID();
     // On envoie une réponse juste à ce joueur
-	console.log("before room:", room);
-    socket.emit('joined-room', {
-      message: 'Player joined room (socket)',
+    console.log("before room:", room);
+    socket.emit("joined-room", {
+      message: "Player joined room (socket)",
       playerId,
       room,
-      players: Array.from(room.getPlayers().values())
+      players: Array.from(room.getPlayers().values()),
     });
 
     // On peut aussi prévenir tous les joueurs de la même room
-    io.to(roomName).emit('room-update', {
+    io.to(roomName).emit("room-update", {
       room,
-      players: Array.from(room.getPlayers().values())
+      players: Array.from(room.getPlayers().values()),
     });
 
     console.log(
-      `Player ${playerId} joined room ${room.getRoomID()} (socket: ${socket.id})`
+      `Player ${playerId} joined room ${room.getRoomID()} (socket: ${
+        socket.id
+      })`
     );
   });
 
-  socket.on('play-card', (data: CardData) => {
+  socket.on("play-card", (data: CardData) => {
     const player = players.get(socket.id);
     if (!player) {
       // TODO: Renvoyer une erreur
@@ -123,17 +162,17 @@ io.on('connection', (socket: Socket) => {
     }
 
     if (Number.isNaN(data.cardID)) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Requête incorrecte",
-        success: false
+        success: false,
       });
       return;
     }
 
     if (!player.playCard(data.cardID)) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Impossible de jouer la carte",
-        success: false
+        success: false,
       });
       return;
     }
@@ -141,16 +180,18 @@ io.on('connection', (socket: Socket) => {
     // TODO: Envoyer l'info aux autres joueurs
     const room = player.getRoom();
     if (!room) {
-      console.error('[ERROR]: how tf the player could play but is not in a game??');
+      console.error(
+        "[ERROR]: how tf the player could play but is not in a game??"
+      );
       return;
     }
-    io.to(`room-${player.getRoom()?.getRoomID()}`).emit('played-card', {
+    io.to(`room-${player.getRoom()?.getRoomID()}`).emit("played-card", {
       cardId: data.cardID,
-      success: true
-    })
+      success: true,
+    });
   });
 
-  socket.on('start', () => {
+  socket.on("start", () => {
     const player = players.get(socket.id);
     if (!player) {
       // TODO: Renvoyer une erreur
@@ -159,82 +200,79 @@ io.on('connection', (socket: Socket) => {
 
     const room = player.getRoom();
     if (!room) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Vous n'êtes pas dans une partie",
-        success: false
+        success: false,
       });
       return;
     }
 
     if (room.getNumberOfPlayers() < 2) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Pas assez de joueurs",
-        success: false
+        success: false,
       });
       return;
     }
     if (room.getState() !== "waiting") {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Partie déjà commencée",
-        success: false
-      })
+        success: false,
+      });
       return;
     }
     room.changeState("round_1");
 
-    io.to(`room-${room.getRoomID()}`).emit('start-game', {
+    io.to(`room-${room.getRoomID()}`).emit("start-game", {
       success: true,
-      players: Array.from(room.getPlayers().values())
+      players: Array.from(room.getPlayers().values()),
     });
   });
 
-  socket.on('get-id', () => {
+  socket.on("get-id", () => {
     const player = players.get(socket.id);
     if (!player) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Je ne te connais pas",
-        success: false
+        success: false,
       });
       return;
     }
 
     const room = player.getRoom();
     if (!room) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Vous n'êtes pas dans une partie",
-        success: false
+        success: false,
       });
       return;
     }
 
     const id = room.getPlayerID(player);
     if (id < 0) {
-      socket.emit('error', {
+      socket.emit("error", {
         message: "Erreur dans la récupération de l'id",
-        success: false
+        success: false,
       });
       return;
     }
 
-    socket.emit('id', id);
+    socket.emit("id", id);
   });
 
-  socket.on('leave-room', () => {
+  socket.on("leave-room", () => {
     const player = players.get(socket.id);
-    if (player)
-      rooms.leaveRoom(player);
+    if (player) rooms.leaveRoom(player);
   });
 
-  socket.on('disconnect', () => {
-    console.log('Client déconnecté :', socket.id);
+  socket.on("disconnect", () => {
+    console.log("Client déconnecté :", socket.id);
     // Ici tu peux gérer la sortie du joueur de la room si besoin
     const player = players.get(socket.id);
-    if (player)
-      rooms.leaveRoom(player);
+    if (player) rooms.leaveRoom(player);
   });
 });
 
 httpServer.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
