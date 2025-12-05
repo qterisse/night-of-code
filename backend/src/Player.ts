@@ -1,17 +1,14 @@
-import { Socket } from "socket.io";
 import { Room } from "./Room";
 
 export class Player {
     private _username: string;
     private _id: number;
-    private _socket: Socket;
     private _hand: number[] = [];
     private _room: Room | null = null;
 
-    constructor (userID: number, username: string, socket: Socket) {
+    constructor (userID: number, username: string) {
         this._id = userID;
         this._username = username;
-        this._socket = socket;
     }
 
     public playCard(cardID: number): boolean {
@@ -45,10 +42,6 @@ export class Player {
 
     public getUsername(): string {
         return this._username;
-    }
-
-    public getSocket(): Socket {
-        return this._socket;
     }
 
     public getHand(): number[] {
