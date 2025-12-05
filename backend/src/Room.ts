@@ -63,8 +63,11 @@ export class Room {
             this.changeState("intermission");
     }
 
-    private shuffleCards(): boolean {
-        let cards = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    private shuffleCards(numberOfCards: number): boolean {
+        let cards: number[] = [];
+
+        for (let i = 0; i < numberOfCards; i++)
+            cards[i] = i + 1;
 
         for (let i = cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -100,15 +103,37 @@ export class Room {
             return;
 
         this._state = state;
-        if (this._state === "round_1") {
-            let i = 0;
-            while (!this.shuffleCards() && i < 5) {
-                console.error('[ERROR]: shuffleCards failed');
-                this.resetPlayersMapKeys(true);
-                i++;
+        switch (this._state) {
+            case ("round_1"): {
+                let i = 0;
+                while (!this.shuffleCards(10) && i < 5) {
+                    console.error('[ERROR]: shuffleCards failed');
+                    this.resetPlayersMapKeys(true);
+                    i++;
+                }
+                if (i >= 5)
+                    console.error('[ERROR]: could not shuffle cards');
+                break;
             }
-            if (i >= 5)
-                console.error('[ERROR]: could not shuffle cards');
+            case ("intermission"): {
+                // TODO: trouver quoi faire
+                break;
+            }
+            case ("round_2"): {
+                let i = 0;
+                while (!this.shuffleCards(10) && i < 5) {
+                    console.error('[ERROR]: shuffleCards failed');
+                    this.resetPlayersMapKeys(true);
+                    i++;
+                }
+                if (i >= 5)
+                    console.error('[ERROR]: could not shuffle cards');
+                break;
+            }
+            case ("finished"): {
+                // TODO: trouver quoi faire
+                break;
+            }
         }
     }
 
