@@ -19,7 +19,7 @@ const GamePage = () => {
 	useEffect(() => {
 		if (!room) return;
 		console.log('my room:', room);
-		if (room?._players.size >= 4) {
+		if (room?._players.length >= 4) {
 			socket.emit("start");
 		}
 	}, [room]);
