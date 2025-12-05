@@ -68,6 +68,7 @@ io.on('connection', (socket: Socket) => {
 
     const playerId = player.getID();
     // On envoie une réponse juste à ce joueur
+	console.log("before room:", room);
     socket.emit('joined-room', {
       message: 'Player joined room (socket)',
       playerId,
