@@ -9,6 +9,9 @@
   --font-montserrat: "Montserrat", sans-serif; 
 }
 
+ul {
+  @apply space-y-2
+}
 ul li {
   @apply list-disc
 }
